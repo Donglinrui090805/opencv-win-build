@@ -1,4 +1,4 @@
-name: Build Windows OpenCV exe
+name: Build Windows OpenCV5.0.0 exe
 
 on:
   push:
@@ -9,29 +9,39 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: 检出代码
+      - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: 安装MinGW
-        uses: egor-tensin/setup-mingw@v2
+      - name: Setup MSVC compiler
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install OpenCV 5.0.0 via vcpkg
+        uses: lukka/run-vcpkg@v11
         with:
-          version: x86_64-13.2.0-release-posix-seh-msvcrt-rt_v11-rev1
+          vcpkgGitCommitId: 'a42af01b72c89b79ccae191c5272f14c35bba20'
+          vcpkgJson: |
+            {
+              "name": "opencv-build",
+              "version-string": "1.0.0",
+              "dependencies": [
+                { "name":"opencv4", "version": "5.0.0" }
+              ]
+            }
+          vcpkgTriplet: x64-windows
 
-      - name: 下载OpenCV
+      - name: Compile youjizhuyi.cpp
         run: |
-          Invoke-WebRequest https://github.com/opencv/opencv/releases/download/5.0.0/opencv-5.0.0-windows.exe -OutFile opencv.exe
-          .\opencv.exe -o .\opencv -y
+          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /I%VCPKG_ROOT%\installed\x64-windows\include /link /LIBPATH:%VCPKG_ROOT%\installed\x64-windows\lib opencv_world5.lib
 
-      - name: 编译程序
+      - name: Copy OpenCV dll
         run: |
-          g++ youjizhuyi.cpp -o youjizhuyi.exe -Iopencv\build\include -Lopencv\build\x64\mingw\lib -lopencv_core4100 -lopencv_imgproc4100 -lopencv_highgui5000 -lopencv_imgcodecs4100
+          copy %VCPKG_ROOT%\installed\x64-windows\bin\opencv_world5.dll .
 
-      - name: 打包文件
+      - name: Zip all runtime files
         run: |
-          Copy-Item opencv\build\x64\mingw\bin\*.dll .
-          Compress-Archive -Path youjizhuyi.exe,input.png,*.dll -DestinationPath release.zip
+          Compress-Archive -Path youjizhuyi.exe,input.png,opencv_world5.dll -DestinationPath release.zip
 
-      - name: 上传成品
+      - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: windows-release
