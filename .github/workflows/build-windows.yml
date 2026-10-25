@@ -19,7 +19,7 @@ jobs:
 
       - name: 下载OpenCV
         run: |
-          Invoke-WebRequest https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-windows.exe -OutFile opencv.exe
+          Invoke-WebRequest https://github.com/opencv/opencv/releases/download/5.0.0/opencv-5.0.0-windows.exe -OutFile opencv.exe
           .\opencv.exe -o .\opencv -y
 
       - name: 编译程序
