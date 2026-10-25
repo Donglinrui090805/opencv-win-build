@@ -24,7 +24,7 @@ jobs:
 
       - name: 编译程序
         run: |
-          g++ youjizhuyi.cpp -o youjizhuyi.exe -Iopencv\build\include -Lopencv\build\x64\mingw\lib -lopencv_core4100 -lopencv_imgproc4100 -lopencv_highgui4100 -lopencv_imgcodecs4100
+          g++ youjizhuyi.cpp -o youjizhuyi.exe -Iopencv\build\include -Lopencv\build\x64\mingw\lib -lopencv_core4100 -lopencv_imgproc4100 -lopencv_highgui5000 -lopencv_imgcodecs4100
 
       - name: 打包文件
         run: |
