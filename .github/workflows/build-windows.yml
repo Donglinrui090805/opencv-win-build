@@ -15,27 +15,27 @@ jobs:
       - name: Setup MSVC (VS2022)
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Download OpenCV 5.0.0
+      - name: Download OpenCV 5.0.0 zip
         run: |
           $ProgressPreference = 'SilentlyContinue'
-          Invoke-WebRequest -Uri "https://github.com/opencv/opencv/releases/download/5.0.0/opencv-5.0.0-windows.exe" -OutFile "opencv-5.0.0-windows.exe"
+          Invoke-WebRequest -Uri "https://github.com/opencv/opencv/releases/download/5.0.0/opencv-5.0.0-windows.zip" -OutFile "opencv-5.0.0-windows.zip"
 
-      - name: Extract OpenCV
+      - name: Extract OpenCV zip
         run: |
-          .\opencv-5.0.0-windows.exe -o .\opencv -y
-          echo "===== 列出lib目录文件 ====="
-          dir .\opencv\build\x64\vc17\lib
+          Expand-Archive -Path opencv-5.0.0-windows.zip -DestinationPath .\opencv -Force
+          echo "==== opencv root ===="
+          dir .\opencv
 
       - name: Compile
         run: |
-          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /EHsc -I.\opencv\build\include /link /LIBPATH:.\opencv\build\x64\vc17\lib opencv_core500.lib opencv_highgui500.lib opencv_imgproc500.lib opencv_imgcodecs500.lib
+          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /EHsc -I.\opencv\opencv\build\include /link /LIBPATH:.\opencv\opencv\build\x64\vc17\lib opencv_core500.lib opencv_highgui500.lib opencv_imgproc500.lib opencv_imgcodecs500.lib
 
       - name: Copy DLL
         run: |
-          copy .\opencv\build\x64\vc17\bin\opencv_core500.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_highgui500.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_imgproc500.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_imgcodecs500.dll .
+          copy .\opencv\opencv\build\x64\vc17\bin\opencv_core500.dll .
+          copy .\opencv\opencv\build\x64\vc17\bin\opencv_highgui500.dll .
+          copy .\opencv\opencv\build\x64\vc17\bin\opencv_imgproc500.dll .
+          copy .\opencv\opencv\build\x64\vc17\bin\opencv_imgcodecs500.dll .
 
       - name: Zip
         run: |
