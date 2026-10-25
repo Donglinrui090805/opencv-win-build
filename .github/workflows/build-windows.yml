@@ -23,15 +23,16 @@ jobs:
       - name: Extract OpenCV
         run: |
           .\opencv-5.0.0-windows.exe -o .\opencv -y
-          dir .\opencv\build\x64\vc17\lib
+          echo "===== List root opencv folder ====="
+          dir .\opencv
 
       - name: Compile
         run: |
-          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /EHsc -I.\opencv\build\include /link /LIBPATH:.\opencv\build\x64\vc17\lib opencv_world5.lib
+          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /EHsc -I.\opencv\opencv\build\include /link /LIBPATH:.\opencv\opencv\build\x64\vc17\lib opencv_world5.lib
 
       - name: Copy DLL
         run: |
-          copy .\opencv\build\x64\vc17\bin\opencv_world5.dll .
+          copy .\opencv\opencv\build\x64\vc17\bin\opencv_world5.dll .
 
       - name: Zip
         run: |
