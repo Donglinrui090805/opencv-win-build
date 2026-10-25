@@ -15,29 +15,28 @@ jobs:
       - name: Setup MSVC (VS2022)
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Download OpenCV 5.0.0 official Windows package
+      - name: Download OpenCV 5.0.0
         run: |
+          $ProgressPreference = 'SilentlyContinue'
           Invoke-WebRequest -Uri "https://github.com/opencv/opencv/releases/download/5.0.0/opencv-5.0.0-windows.exe" -OutFile "opencv-5.0.0-windows.exe"
 
       - name: Extract OpenCV
         run: |
           .\opencv-5.0.0-windows.exe -o .\opencv -y
+          dir .\opencv
 
-      - name: Compile (separate modules, same as your Mac)
+      - name: Compile
         run: |
-          cl youjizhuyi.cpp /Fe:youjizhuyi.exe `
-          -I.\opencv\build\include `
-          /link /LIBPATH:.\opencv\build\x64\vc17\lib `
-          opencv_core5.lib opencv_highgui5.lib opencv_imgproc5.lib opencv_imgcodecs5.lib
+          cl youjizhuyi.cpp /Fe:youjizhuyi.exe -I.\opencv\build\include /link /LIBPATH:.\opencv\build\x64\vc17\lib opencv_core5.lib opencv_highgui5.lib opencv_imgproc5.lib opencv_imgcodecs5.lib
 
-      - name: Copy required dlls
+      - name: Copy DLLs
         run: |
           copy .\opencv\build\x64\vc17\bin\opencv_core5.dll .
           copy .\opencv\build\x64\vc17\bin\opencv_highgui5.dll .
           copy .\opencv\build\x64\vc17\bin\opencv_imgproc5.dll .
           copy .\opencv\build\x64\vc17\bin\opencv_imgcodecs5.dll .
 
-      - name: Zip release
+      - name: Zip
         run: |
           Compress-Archive -Path youjizhuyi.exe,input.png,opencv_core5.dll,opencv_highgui5.dll,opencv_imgproc5.dll,opencv_imgcodecs5.dll -DestinationPath release.zip
 
