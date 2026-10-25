@@ -23,22 +23,19 @@ jobs:
       - name: Extract OpenCV
         run: |
           .\opencv-5.0.0-windows.exe -o .\opencv -y
-          dir .\opencv
+          dir .\opencv\build\x64\vc17\lib
 
       - name: Compile
         run: |
-          cl youjizhuyi.cpp /Fe:youjizhuyi.exe -I.\opencv\build\include /link /LIBPATH:.\opencv\build\x64\vc17\lib opencv_core5.lib opencv_highgui5.lib opencv_imgproc5.lib opencv_imgcodecs5.lib
+          cl youjizhuyi.cpp /Fe:youjizhuyi.exe /EHsc -I.\opencv\build\include /link /LIBPATH:.\opencv\build\x64\vc17\lib opencv_world5.lib
 
-      - name: Copy DLLs
+      - name: Copy DLL
         run: |
-          copy .\opencv\build\x64\vc17\bin\opencv_core5.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_highgui5.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_imgproc5.dll .
-          copy .\opencv\build\x64\vc17\bin\opencv_imgcodecs5.dll .
+          copy .\opencv\build\x64\vc17\bin\opencv_world5.dll .
 
       - name: Zip
         run: |
-          Compress-Archive -Path youjizhuyi.exe,input.png,opencv_core5.dll,opencv_highgui5.dll,opencv_imgproc5.dll,opencv_imgcodecs5.dll -DestinationPath release.zip
+          Compress-Archive -Path youjizhuyi.exe,input.png,opencv_world5.dll -DestinationPath release.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
