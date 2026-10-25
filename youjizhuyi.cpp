@@ -1,4 +1,6 @@
-#include<bits/stdc++.h>
+#include<iostream>
+#include<vector>
+#include<string>
 #include<opencv2/opencv.hpp>
 using namespace std;
 #define ts_1 1000
